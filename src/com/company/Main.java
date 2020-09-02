@@ -1,11 +1,51 @@
 package com.company;
 
+import javax.swing.text.html.HTMLDocument;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
-	System.out.println("hot loca is not happy");
+	//System.out.println("hot loca is not happy");
+
+	ArrayList l = new ArrayList();
+	for(int  i = 0; i <= 10; i++) {
+	    l.add(i);
+    }
+	//System.out.println(l);
+
+        LinkedList ll = new LinkedList();
+	ll.add("Yes");
+	ll.add("No");
+	ll.add("Maybe");
+	System.out.println(ll);
+
+	ListIterator ltr = ll.listIterator();
+	while(ltr.hasNext()) {
+	    String s = (String) ltr.next();
+	    if(s.equals("Yes")) {
+	        ltr.remove();
+        }
+	    else if(s.equals("No")) {
+	        ltr.add("Nope");
+        }
+	    else if(s.equals("Maybe")) {
+	        ltr.set("Perhaps");
+        }
+        System.out.println(ll);
+    }
+
+
+//	ListIterator itr = (ListIterator) l.iterator();
+//	while(itr.hasNext()) {
+//	    Integer i = (Integer) itr.next();
+//	    if(i % 2 == 0) {
+//            System.out.println(l);
+//        }else {
+//	        itr.remove();
+//        }
+//    }
+
     }
 }
 
@@ -232,6 +272,7 @@ class Solution_3SumClosest {
         int result = nums[0] + nums[1] + nums[nums.length - 1];
         Arrays.sort(nums);
 
+
         for (int i = 0; i < nums.length - 2; i++) {
             int a_pointer = i + 1;
             int b_pointer = nums.length - 1;
@@ -385,4 +426,104 @@ class Solution_Brackets {
         return stack.isEmpty();
     }
 
+}
+
+class Solution_Merging {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+
+
+
+        ListNode dummy = new ListNode(-1);
+        ListNode head = dummy;
+
+        while(l1 != null || l2 != null ) {
+            if (l1.val < l2.val) {
+                dummy.next = l1;
+                l1 = l1.next;
+            }else {
+                dummy.next = l2;
+                l2 = l2.next;
+            }
+            dummy = dummy.next;
+        }
+        if(l1 != null) {
+            dummy.next = l1;
+        }else {
+            dummy.next = l2;
+        }
+
+        return head.next;
+
+
+    }
+}
+
+class Solution_Parenthesis {
+    public List<String> generateParenthesis(int n) {
+
+         List<String> output_arr = new ArrayList();
+         backtrack(output_arr, "", 0,0,n);
+         return output_arr;
+
+
+    }
+
+    public void backtrack(List<String> output_arr, String current_string,int open, int close, int max) {
+        if (current_string.length() ==  max * 2) {
+            output_arr.add(current_string);
+            return;
+        }
+        if(open < max) backtrack(output_arr,current_string + "(", open + 1, close, max);
+        if (close < open) backtrack(output_arr,current_string + ")", open, close + 1, max);
+    }
+}
+
+class Solution_mergeList {
+    public ListNode mergeKLists(ListNode[] lists) {
+
+        // min Heap
+
+        if (lists.length == 0) return null;
+
+        int interval = 1;
+        int length = lists.length;
+        while(interval < length) {
+            for(int i = 0; i < length - interval; i+= (interval * 2)) {
+                merge(lists, i, i + interval);
+
+            }
+            interval *= 2;
+        }
+
+        return lists[0];
+
+
+    }
+
+    public void merge(ListNode[] list, int index1, int index2) {
+        ListNode ans = new ListNode(-1);
+        ListNode ptr = ans;
+        ListNode l1 = list[index1];
+        ListNode l2 = list[index2];
+
+        while(l1 != null || l2 != null) {
+            if(l1 == null ) {
+                ptr.next = l2;
+                break;
+            }
+            if (l2 == null ){
+                ptr.next = l1;
+                break;
+            }
+            if(l1.val < l2.val){
+                ptr.next = l1;
+                l1 = l1.next;
+            }else {
+                ptr.next = l2;
+                l2 = l2.next;
+            }
+            ptr = ptr.next;
+        }
+        list[index1] = ans.next;
+    }
 }
