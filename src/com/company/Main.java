@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.*;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -179,4 +181,208 @@ class Solution_Roman {
 
 
     }
+}
+
+class Solution_RomanToInt {
+    public int romanToInt(String s) {
+
+        Map<Character,Integer> map = new HashMap();
+        map.put('I', 1);
+        map.put('V', 5);
+        map.put('X', 10);
+        map.put('L', 50);
+        map.put('C', 100);
+        map.put('D', 500);
+        map.put('M', 1000);
+
+        int result = 0;
+        for(int i = 0; i < s.length(); i++) {
+            if(i > 0 && map.get(s.charAt(i)) > map.get(s.charAt(i - 1))) {
+                result += map.get(s.charAt(i)) - 2 * map.get(s.charAt(i - 1));
+            }else {
+                result += map.get(s.charAt(i));
+            }
+
+
+        }
+        return result;
+
+    }
+}
+
+class Solution_Prefix {
+    public String longestCommonPrefix(String[] strs) {
+
+         if(strs.length == 0) return "";
+         String prefix = strs[0];
+
+         for(int i = 0; i <strs.length; i++) {
+             while(strs[i].indexOf(prefix) != 0 ) {
+                 prefix = prefix.substring(prefix.length() - 1);
+             }
+         }
+         return prefix;
+
+    }
+}
+
+class Solution_3SumClosest {
+    public int threeSumClosest(int[] nums, int target) {
+
+        int result = nums[0] + nums[1] + nums[nums.length - 1];
+        Arrays.sort(nums);
+
+        for (int i = 0; i < nums.length - 2; i++) {
+            int a_pointer = i + 1;
+            int b_pointer = nums.length - 1;
+
+            while (a_pointer < b_pointer) {
+                int current_sum = nums[i] + nums[a_pointer] + nums[b_pointer];
+                if (current_sum > target) {
+                    b_pointer -= 1;
+                } else {
+                    a_pointer += 1;
+                }
+                if (Math.abs(current_sum - target) < Math.abs(result - target)) {
+                    result = current_sum;
+                }
+            }
+        }
+        return result;
+
+     }
+
+
+}
+
+class Solution_List {
+    public List<String> letterCombinations(String digits) {
+
+        LinkedList<String> output_arr = new LinkedList();
+        if(digits.length() == 0) {
+            return output_arr;
+        }
+
+        output_arr.add("");
+        String[] char_map = new String[] { "0", "1", "abc", "def", "ghi","jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+        for(int i = 0 ; i < digits.length(); i++) {
+            int index = Character.getNumericValue(digits.charAt(i));
+            while(output_arr.peek().length() == i) {
+                String permutation = output_arr.remove();
+                for(char c: char_map[index].toCharArray()) {
+                    output_arr.add(permutation + c);
+                }
+            }
+        }
+
+        return output_arr;
+    }
+}
+
+class Solution_4Sum {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+
+        List<List<Integer>> result = new ArrayList<>();
+        Arrays.sort(nums);
+        for (int i = 0; i < nums.length - 3; i++) {
+            if (i != 0 && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            for (int j = i + 1; j < nums.length - 2; j++) {
+                if (j != i + 1 && nums[j] == nums[j - 1]) {
+                    continue;
+                }
+                int left = j + 1;
+                int right = nums.length - 1;
+
+                while (left < right) {
+                    int sum = nums[i] + nums[j] + nums[left] + nums[right];
+                    if (sum < target) {
+                        left++;
+                    } else if (sum > target) {
+                        right--;
+
+                    } else {
+                        List<Integer> quadruplets = new ArrayList<>();
+                        quadruplets.add(nums[i]);
+                        quadruplets.add(nums[j]);
+                        quadruplets.add(nums[left]);
+                        quadruplets.add(nums[right]);
+
+                        result.add(quadruplets);
+                        left++;
+                        right--;
+
+                        while (left < right && nums[left] == nums[left - 1]) {
+                            left++;
+                        }
+                        while (left < right && nums[right] == nums[right + 1]) {
+                            right--;
+                        }
+                    }
+                }
+            }
+
+
+        }
+        return result;
+    }
+}
+
+
+
+
+ class ListNode {
+      int val;
+      ListNode next;
+      ListNode() {}
+      ListNode(int val) { this.val = val; }
+      ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+  }
+
+class Solution_NthNode {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+
+        ListNode dummy_head = new ListNode(0);
+        dummy_head.next = head;
+
+        ListNode slow = dummy_head;
+        ListNode fast = dummy_head;
+
+        for(int i = 0; i < n + 1; i++) {
+            fast = fast.next;
+        }
+
+        while(fast != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+
+        slow.next = slow.next.next;
+
+
+        return dummy_head.next;
+
+
+    }
+}
+
+class Solution_Brackets {
+    public boolean isValid(String s) {
+        if(s.length() % 2 != 0) return false ;
+        Stack<Character> stack = new Stack();
+        for(char c : s.toCharArray()) {
+            if (c == '(' || c == '{' || c == '[' ) {
+                stack.push(c);
+            }else if (c == '}' && !stack.isEmpty() && stack.peek() == '(') {
+                stack.pop();
+            }else if (c == ']' && !stack.isEmpty() && stack.peek() == '(') {
+                stack.pop();
+            }
+        }
+        return stack.isEmpty();
+    }
+
 }
