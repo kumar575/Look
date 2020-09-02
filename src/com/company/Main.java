@@ -527,3 +527,241 @@ class Solution_mergeList {
         list[index1] = ans.next;
     }
 }
+
+class Solution_SwapNodes {
+    public ListNode swapPairs(ListNode head) {
+
+        ListNode temp = new ListNode(0);
+        temp.next = head;
+
+        ListNode current = temp;
+
+        while(current.next != null && current.next.next != null) {
+            ListNode first_node = current.next;
+            ListNode second_node = current.next.next;
+            first_node.next  = second_node.next;
+            current.next.next = first_node;
+            current = current.next.next;
+
+        }
+
+        return temp.next;
+
+    }
+}
+
+class Solution_ReverseNodeK {
+    public ListNode reverseKGroup(ListNode head, int k) {
+
+        ListNode root = new ListNode(0, head);
+        ListNode cur = head;
+        ListNode prev = root;
+
+        while(cur != null) {
+            ListNode tail = cur;
+            int listIndex = 0;
+
+             while(cur != null && listIndex < k) {
+                 cur = cur.next;
+                 listIndex++;
+             }
+             if(listIndex != k) {
+                 prev.next = tail;
+
+             }else {
+                 prev.next = reverse(tail, k);
+                 prev = tail;
+             }
+        }
+        return root.next;
+
+
+    }
+
+    private ListNode reverse (ListNode head, int k ){
+        ListNode prev = null;
+        ListNode current = head;
+        ListNode next = null;
+
+        while(current != null && k-- > 0){
+            next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+
+        }
+        head = prev;
+        return head;
+
+    }
+
+}
+
+//
+//class Solution_duplicatesList {
+//    public int removeDuplicates(ListNode nums) {
+//
+//         ListNode current_node = head;
+//         while(current_node != null && current_node.next != null) {
+//             if(current_node.next.val == current_node.val){
+//                 current_node.next = current_node.next.next;
+//             }else{
+//                 current_node = current_node.next;
+//             }
+//         }
+//         return head;
+//    }
+//}
+
+class Solution_duplicatesArray {
+    public int removeDuplicates(int[] nums) {
+
+        int index = 1;
+        for(int i = 0; i < nums.length - 1; i++){
+            if(nums[i] != nums[i + 1]) {
+                nums[index++] = nums[i + 1];
+            }
+        }
+        return index;
+
+    }
+}
+
+class Solution_removeElement {
+    public int removeElement(int[] nums, int val) {
+
+        if(nums.length == 0) {
+            return 0;
+        }
+
+        int valid_size = 0;
+        int j = 0;
+        for(int i = 0 ; i < nums.length ; i++){
+            if(nums[i] != val) {
+                nums[j] = nums[i];
+                valid_size++;
+            }
+        }
+        return valid_size;
+    }
+}
+
+class Solution_str {
+    public int strStr(String haystack, String needle) {
+
+        if(haystack == null || needle == null) {
+            return -1;
+        }
+
+        for(int i = 0; i < haystack.length() - needle.length() + 1; i++) {
+            int j;
+            for( j = 0; j < needle.length(); j++) {
+                if(haystack.charAt(i + j) == needle.charAt(j)) {
+                    break;
+                }
+            }
+            if(j == needle.length()) {
+                return i;
+            }
+        }
+        return -1;
+
+    }
+}
+
+class Solution_divide {
+    public int divide(int dividend, int divisor) {
+
+        int sign = (dividend < 0) ^ (divisor < 0) ? -1 : 1 ;
+
+        long ldividend = Math.abs((long) dividend);
+        long ldivisor = Math.abs((long)divisor);
+
+        long res = 0;
+
+        while(ldivisor <= ldividend){
+            long temp = ldivisor;
+            long mul = 1;
+            while(ldividend >= (temp << 1)) {
+                temp <<= 1 ;
+                mul <<= 1;
+            }
+
+            res += mul;
+            ldividend -= temp;
+        }
+        res *= sign;
+
+        if(res >= Integer.MAX_VALUE){
+            return Integer.MAX_VALUE;
+        } else {
+            return (int)res;
+        }
+
+    }
+}
+
+
+class Solution_substring {
+    public List<Integer> findSubstring(String s, String[] words) {
+
+          List<Integer> result = new ArrayList();
+
+          if(s.length()==0 || words.length==0)return result;
+          HashMap<String, Integer> map1 = new HashMap();
+
+          for(int i=0; i<words.length; i++) {
+              map1.put(words[i], map1.getOrDefault(words[i], 0) + 1);
+
+          }
+          int t = words.length * words[0].length();
+          int sl = words[0].length();
+
+          int i = 0;
+          while(i<=s.length()-t){
+              String sub = s.substring(i, i+t);
+              // 0 6 , 1 7 2 8
+              HashMap<String, Integer> map2 = new HashMap();
+              int k = 0;
+              int n = 0;
+              while(k < words.length) {
+
+                  String temp = sub.substring(n, n+sl);
+                  map2.put(words[i], map2.getOrDefault(temp, 0) + 1);
+
+                  n = n + sl;
+                  k++;
+              }
+              if(map1.equals(map2))result.add(i);
+              i++;
+          }
+
+
+          return result;
+
+    }
+}
+
+//class Solution_mergeKsorted {
+//    public ListNode mergeKLists(ListNode[] lists) {
+//        PriorityQueue<ListNode> heap;
+//        heap = new PriorityQueue(<Comparator <ListNode>> (o1, o2) -> o1.val -  o2.val;);
+//
+//        for(ListNode head: lists){
+//            if(head != null){
+//                heap.offer(head);
+//
+//            }
+//        }
+//        ListNode pre = new ListNode(-1);
+//        ListNode tmp = pre;
+//        while(!heap.isEmpty()){
+//          ListNode curr = heap.poll();
+//          tmp.next = new ListNode(curr.val);
+//        }
+//        tmp = tmp.next;
+//    }
+//    return pre.next;
+//
+//
+//    }
