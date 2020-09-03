@@ -1,6 +1,7 @@
 package com.company;
 
 import javax.swing.text.html.HTMLDocument;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
@@ -765,3 +766,342 @@ class Solution_substring {
 //
 //
 //    }
+
+class Solution_permu {
+    public void nextPermutation(int[] nums) {
+
+        int k = nums.length - 2;
+        while(k>= 0 && nums[k] >= nums[k+1]) k--;
+        if(k==-1){
+            reverseArray(0, nums.length-1, nums);
+
+        }
+        //1. 321
+        for(int i = nums.length -1 ; i > k;i--) {
+            if(nums[i] > nums[k]){
+                int temp = nums[i];
+                nums[i] = nums[k];
+                nums[k] = temp;
+                break;
+            }
+        }
+        reverseArray(k+1, nums.length-1, nums);
+    }
+
+    void reverseArray(int i, int j , int [] nums){
+        while(i < j){
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+            i++; j--;
+        }
+    }
+
+}
+
+
+class Solution_bkts {
+    public int longestValidParentheses(String s) {
+
+        // 0 1 2 3
+        // ()  ) (
+        // character stack
+        // index stack
+
+
+        Stack<Character> ct = new Stack();
+        Stack<Integer> index = new Stack();
+        index.add(-1);
+        int max = 0;
+        for(int i = 0 ; i < s.length() ; i++){
+            if(s.charAt(i) == '('){
+                ct.add('C');
+                index.add(i);
+            }else {
+                if(ct.isEmpty() && ct.peek()=='('){
+                    ct.pop();
+                    index.pop();
+                    max = Math.max(max, i-index.peek());
+                }else {
+                    index.add(i);
+                }
+            }
+        }
+
+       return max;
+
+    }
+}// didn't work
+
+class Solution_rotatedArray {
+    public int search(int[] nums, int target) {
+
+        if(nums == null || nums.length == 0) return -1;
+
+        int left = 0;
+        int right = nums.length - 1;
+        while(left < right){
+            int midpoint = left + (right - left) / 2;
+            if(nums[midpoint] > nums[right]){
+                left = midpoint + 1;
+            }else {
+                right = midpoint;
+            }
+        }
+
+        int start = left;
+        left = 0;
+        right = nums.length - 1;
+
+        if(target >= nums[start] && target <= nums[right]){
+            left = start;
+        }else {
+            right = start;
+        }
+
+        while(left <= right){
+            int midpoint = left + (right - left)/2;
+            if(nums[midpoint] == target){
+                return midpoint;
+            }else if(nums[midpoint] < target){
+                left = midpoint + 1;
+            }else {
+                right = midpoint -1;
+            }
+        }
+        return -1;
+
+    }
+}
+
+class Solution_FindflpInaSortedArray {
+    public int[] searchRange(int[] nums, int target) {
+
+        int[] result = new int[2];
+        result[0] = findStartingIndex(nums, target);
+        result[1] = findEndingIndex(nums, target);
+        return result;
+
+    }
+    public int findStartingIndex(int[] nums, int target){
+        int index = -1;
+
+        int start = 0;
+        int end = nums.length-1;
+
+        while(start <= end){
+            int midpoint = start + (end-start)/2 ;
+            if(nums[midpoint] >= target){
+                end = midpoint - 1;
+            }else {
+                start = midpoint+1;
+            }
+            if(nums[midpoint] == target) index = midpoint;
+        }
+        return index;
+    }
+
+    public int findEndingIndex(int[] nums, int target){
+        int index = -1;
+        int start = 0;
+        int end = nums.length - 1;
+        while(start <= end){
+            int midpoint = start + (end - start)/2;
+
+            if(nums[midpoint] <= target){
+                start = midpoint + 1;
+            }else {
+                end = midpoint -1;
+            }
+            if(nums[midpoint] == target) index = midpoint;
+        }
+        return index;
+    }
+
+}
+
+class Solution_35 {
+    public int searchInsert(int[] nums, int target) {
+
+        int start = 0;
+        int end = nums.length - 1;
+
+        while(start + 1 < end ){
+            int mid = start + (end - start)/2;
+            if (nums[mid] == target){
+                return mid;
+            }else if(nums[mid] > target){
+                end = mid;
+            }else {
+                start = mid;
+            }
+        }
+        if (nums[end] < target){
+            return end + 1;
+        }else if(nums[start] >= target){
+            return start;
+        }else {
+            // nums
+            return end;
+        }
+
+    }
+}
+
+
+class Solution_sudoku {
+    public boolean isValidSudoku(char[][] board) {
+        HashSet<String> seen = new HashSet();
+        for(int i = 0; i< 9; i++){
+            for(int j=0;j<9;j++){
+                char current_val = board[i][j];
+                if(current_val != '.'){
+                    if(!seen.add(current_val + "found in row" + i) ||!seen.add(current_val + "found in column" + j) || !seen.add(current_val + "found in box" + i/3 + "-" + j/3) )
+                        return false;
+
+                }
+            }
+        }
+        return true;
+
+    }
+}
+
+
+class Solution_sudoku1 {
+    public void solveSudoku(char[][] board) {
+      helper(board);
+
+
+    }
+    private boolean isValid(char[][] board, int row, int col, char num){
+        for(int i = 0 ;i <9;i++) {
+            if(board[i][col] == num) return false;
+            if(board[row][i] == num)return false;
+            if(board[3 * (row/3)+ i/3][3 * (col/3) + i % 3] == num)return false;
+
+        }
+        return true;
+    }
+
+    private boolean helper(char[][] board){
+        for(int i =0; i< 9;i++){
+            for(int j =0;j<9;j++){
+                if(board[i][j] == '.'){
+                    for(char num = '1' ; num <=9;num++){
+                        if(isValid(board,i,j,num)){
+                            board[i][j] = num;
+                            if(helper(board))return true;
+                            board[i][j] = '.';
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
+
+class Solution_CS {
+    public String countAndSay(int n) {
+
+        String val = "1";
+        for(int i =0; i< n-1; i++){
+            char c = val.charAt(0);
+            StringBuilder s = new StringBuilder();
+            int count = 1;
+
+            for(int j = 1; j < val.length(); j++){
+                if(c!= val.charAt(j)){
+                    s.append(count);
+                    s.append(c);
+                    count = 0;
+                    c = val.charAt(j);
+                }
+                count++;
+
+            }
+            s.append(count);
+            s.append(c);
+            val = s.toString();
+        }
+        return val;
+
+
+    }
+}
+
+
+class Solution_sumCombination {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+
+        List<List<Integer>> results = new ArrayList<>();
+
+        if (candidates == null || candidates.length == 0){
+            return results;
+        }
+
+        Arrays.sort(candidates);
+        List<Integer> combination = new ArrayList<>();
+        toFindCombinationsToTarget(results, combination, candidates, target, 0);
+
+        return results;
+
+    }
+
+    private void toFindCombinationsToTarget(List<List<Integer>> results, List<Integer> combination, int[] candidates,
+                                            int target, int startIndex) {
+        if(target == 0){
+            results.add(new ArrayList<>(combination));
+            return;
+        }
+
+        for(int i = startIndex; i < candidates.length; i++){
+            if(candidates[i] > target){
+                break;
+            }
+
+            combination.add(candidates[i]);
+            toFindCombinationsToTarget(results, combination,candidates, target - candidates[i], i);
+            combination.remove(combination.size() - 1);
+        }
+
+    }
+
+
+    class Solution_sum2 {
+        public List<List<Integer>> combinationSum2(int[] candidates, int target) {
+
+//            int[] sortedList = new int[];
+//            sortedList =  new Arrays.sort(candidates);
+
+            List<List<Integer>> result = new ArrayList<>();
+            Arrays.sort(candidates);
+
+            findCombinations(candidates, 0 , target, new ArrayList<Integer>(), result);
+            return result;
+        }
+
+        public void findCombinations(int[] candidates, int index, int target, List<Integer> current, List<List<Integer>> result){
+            if(target == 0){
+                result.add(new ArrayList<> (current));
+                return;
+            }
+            if(target < 0) {
+                return;
+            }
+
+            for(int i = index; i < candidates.length; i++){
+                if(i == index || candidates[i] != candidates[i - 1]){
+                    current.add(candidates[i]);
+                    findCombinations(candidates, i + 1, target - candidates[i] , current, result);
+                    current.remove(current.size() - 1);
+                }
+            }
+
+
+        }
+
+    }
+}
