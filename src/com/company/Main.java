@@ -1,7 +1,5 @@
 package com.company;
 
-import javax.swing.text.html.HTMLDocument;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
@@ -1104,4 +1102,466 @@ class Solution_sumCombination {
         }
 
     }
+}
+
+class Solution_FRP {
+    public int firstMissingPositive(int[] nums) {
+        if(nums == null || nums.length == 0) return 1;
+        int n = nums.length;
+        int containsOne = 0;
+        // step 1
+        // [2,3,-5]
+        for(int i = 0; i < n ; i++){
+            if(nums[i] == 1){
+                containsOne = 1;
+
+            }else if(nums[i] <= 0 || nums[i] > n){
+                nums[i] = 1;
+            }
+        }
+        if(containsOne == 0) return 1;
+
+        // step 2
+        for(int i =0; i < n; i++){
+            int index = Math.abs(nums[i]) - 1;
+            if (nums[index] > 0) nums[index] = -1 * nums[index];
+
+        }
+
+        // step 3
+        for(int i = 0; i < n; i++){
+            if(nums[i] > 0){
+                return i + 1;
+            }
+        }
+
+        return n + 1;
+    }
+}
+
+
+class Solution_trap {
+    public int trap(int[] height) {
+       int totalAmount = 0;
+       if (height == null || height.length == 0){
+           return totalAmount;
+       }
+
+       int[] leftHighest = new int[height.length + 1];
+       leftHighest[0] = 0;
+         for(int i = 0; i < height.length; i++){
+             leftHighest[i + 1] = Math.max(leftHighest[i], height[i]);
+
+
+    }
+
+         int rightHighest = 0;
+         for(int i = 0; i < height.length; i++){
+             rightHighest = Math.max(height[i], rightHighest);
+             totalAmount += Math.min(leftHighest[i], rightHighest) > height[i] ?
+                     Math.min(leftHighest[i], rightHighest) - height[i] : 0;
+         }
+         return totalAmount;
+    }
+}
+
+class Solution_43 {
+    public String multiply(String num1, String num2) {
+
+        char[] chs1 = num1.toCharArray();
+        char[] chs2 = num2.toCharArray();
+        int n1 = chs1.length;
+        int n2 = chs2.length;
+
+        char[] res = new char[n1 + n2];
+        Arrays.fill(res, '0');
+        for(int j = n2 - 1 ; j >= 0; j--){
+            for(int i = n1 - 1; i >= 0; i--){
+                int product = (chs1[i] - '0') * (chs2[j] - '0');
+                int tmp = res[i + j + 1] - '0' + product;
+                res[i + j + 1] = (char)(tmp % 10);
+                res[i + j] = (char) ((res[i + j] - '0' + tmp/10 + '0') + '0');
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        boolean seen = false;
+        for( char c : res){
+            if(c == '0' && !seen) continue;
+            sb.append(c);
+            seen = true;
+        }
+
+        return sb.length() == 0 ? "0" : sb.toString();
+
+    }
+}
+
+class Solution_wildmatch {
+    public boolean isMatch(String s, String p) {
+
+        int sptr = 0, pptr = 0, str = -1, match = 0;
+        while(sptr < s.length()) {
+            if(pptr < p.length() && (p.charAt(pptr) == '?' || p.charAt(pptr) == s.charAt(sptr))) {
+                sptr++;
+                pptr++;
+            }
+            if(p.charAt(pptr) == '*'){
+                match = sptr;
+                str = pptr;
+            }
+            else if(str != -1){
+                pptr = str + 1;
+                sptr++;
+            }
+             else return false;
+        }
+        while(pptr < p.length() && p.charAt(0) == '*') pptr++;
+        return pptr==p.length();
+
+
+    }
+}
+
+class Solution_jump {
+    public int jump(int[] nums) {
+
+        int pos = 0;
+        int des = 0;
+        int jump = 0;
+
+        for(int i = 0; i<nums.length - 1; i++){
+            des = Math.max(des, i+nums[i]);
+
+            if(pos==i){
+                pos = des;
+                jump++;
+            }
+        }
+        return jump;
+    }
+}
+
+class Solution_permutations {
+    public List<List<Integer>> permute(int[] nums) {
+ // subset is like a sonata
+        // 1 2 3
+
+        List<List<Integer>> subset = new ArrayList();
+        boolean[] used = new boolean[nums.length];
+        dfs(subset, nums,new ArrayList(),used);
+        return subset;
+
+    }
+
+    void dfs(List<List<Integer>> subset, int[] nums, List<Integer> current, boolean[] used){
+        if(current.size() == nums.length){
+            subset.add(new ArrayList(current));
+
+            return;
+
+        }
+
+        for(int i =0; i < nums.length; i++){
+            if(used[i]==true)continue;
+            current.add(nums[i]);
+            used[i] = true;
+            dfs(subset, nums, current,used);
+            current.remove(current.size() - 1);
+            used[i] = false;
+        }
+    }
+
+}
+
+class Solution_dup {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        if (nums == null || nums.length == 0) return res;
+
+
+        Arrays.sort(nums);
+        List<Integer> list = new ArrayList<Integer>();
+        boolean[] visited = new boolean[nums.length];
+        this.helper(nums, list, res, visited);
+        return res;
+    }
+
+    private void helper(int[] nums, List<Integer> list, List<List<Integer>> res, boolean[] visited){
+        if(nums.length == list.size()){
+            res.add(new ArrayList<Integer>(list));
+            return;
+        }
+        for(int i = 0; i < nums.length; i++){
+            if(visited[i]){
+                continue;
+            }
+
+            visited[i] = true;
+            list.add(nums[i]);
+            this.helper(nums, list,res, visited);
+            visited[i] =false;
+            list.remove(list.size() - 1);
+            while(i < nums.length -1 && nums[i] == nums[i + 1]){
+                    i++;
+            }
+        }
+    }
+
+}
+
+
+
+class Solution_rotate {
+    public void rotate(int[][] matrix) {
+        int N = matrix.length;
+      for(int i = 0; i < N; i++ ){
+          for(int j = i; j < N; j++){
+              int temp = matrix[i][j];
+              matrix[i][j] = matrix[j][i];
+              matrix[j][i] = temp;
+          }
+      }
+
+      for(int i =0; i < N; i++){
+          for( int j = 0 ; j < N/2 ; j++){
+              int temp = matrix[i][j];
+              matrix[i][j] = matrix[i][N-1-j];
+              matrix[i][N-1-j] = temp;
+          }
+      }
+
+    }
+}
+
+class Solution_Anagrams {
+    public List<List<String>> groupAnagrams(String[] strs) {
+
+        List<List<String>> res = new ArrayList<>();
+        if(strs.length == 0) {
+            return res;
+        }
+            HashMap<String, ArrayList<String>> hm = new HashMap<>();
+
+            for(String str : strs){
+                int[] count = new int[26];
+                for(int i =0; i < str.length(); i++){
+                    count[str.charAt(i) - 'a']++;
+
+                }
+                StringBuilder sb = new StringBuilder();
+                for(int c: count ){
+                    sb.append(c);
+                    sb.append("#");
+
+                }
+                String rep = sb.toString();
+
+                if(hm.containsKey(rep)){
+                    ArrayList<String> ana = hm.get(rep);
+                    ana.add(str);
+                    hm.put(rep, ana);
+                }else{
+                    ArrayList<String> ana = new ArrayList<>();
+                    ana.add(str);
+                    hm.put(rep,ana);
+                }
+
+            }
+
+            for(List<String> val: hm.values()){
+                res.add(val);
+            }
+
+
+
+
+        return res;
+    }
+}
+
+class Solution_Pow {
+    public double myPow(double x, int n) {
+
+        double res = 1.0;
+        long N = n;
+        if(n < 0){
+            x = 1/x;
+            N = -N;
+        }
+
+        double curProduct = x;
+        for(long i = N; i > 0; i /=2){
+            if( i % 2 == 1){
+                res *= curProduct;
+            }
+            curProduct *= curProduct;
+        }
+        return res;
+
+    }
+}
+
+
+class Solution_queens {
+    List<List<String>> res = new ArrayList<>();
+    public List<List<String>> solveNQueens(int n) {
+    placeQueen(new int[n][n],0, new HashSet<>(), new HashSet<>(), new HashSet<>());
+return res;
+
+    }
+
+    public void placeQueen(int[][] board, int i, Set<Integer> diagonal, Set<Integer> diagonal2, Set<Integer>vertical){
+        if( i== board.length){
+            // call the function that add the strings.
+            return ;
+        }
+
+        for(int j =0; j < board.length; j++){
+            if(diagonal.contains(i + j) && !diagonal2.contains(j - i) && !vertical.contains(j)){
+                board[i][j] = 1;
+                diagonal.add(i+j);
+                diagonal2.add(j - i);
+                vertical.add(j);
+                placeQueen(board, i+1, diagonal,diagonal2, vertical);
+                board[i][j] = 0;
+                diagonal.remove(i+j);
+                diagonal2.remove(j - i);
+                vertical.remove(j);
+
+            }
+        }
+    }
+
+    public void addToList(int[][] board){
+        List<String> list = new ArrayList<>();
+         for(int i =0; i< board.length; i++){
+             String temp = "";
+
+             for(int j =0;j<board.length;j++){
+                 if(board[i][j] == 0){
+                     temp+= ".";
+
+                 }else {
+                     temp += "Q";
+                 }
+             }
+             list.add(temp);
+         }
+         res.add(list);
+    }
+
+
+    class Solution_spiral{
+        public List<Integer> spiralOrder(int[][] matrix) {
+
+            List<Integer> res = new ArrayList<Integer>();
+            if(matrix.length == 0) return res;
+            int rowBegin = 0;
+            int rowEnd = matrix.length - 1;
+            int columnBegin = 0;
+            int columnEnd = matrix[0].length - 1;
+            while(rowBegin <= rowEnd && columnBegin <= columnEnd){
+                for(int i = columnBegin; i<= columnEnd; i++){
+                    res.add(matrix[rowBegin][i]);
+                }
+                rowBegin++;
+                for(int i = columnBegin; i <=rowEnd; i++){
+                    res.add(matrix[i][columnEnd]);
+                }
+                columnEnd--;
+                if(rowBegin <= rowEnd){
+                    for(int i= columnEnd; i>= columnBegin; i--){
+                        res.add(matrix[rowEnd][i]);
+                    }
+                }
+                rowEnd--;
+                if(columnBegin <= columnEnd){
+                    for(int i =rowEnd; i>= rowBegin; i--){
+                        res.add(matrix[i][columnBegin]);
+
+                    }
+                }
+                columnBegin++;
+            }
+            return res;
+        }
+    }
+
+}
+
+
+
+class Solution_JMP {
+    public boolean canJump(int[] nums) {
+
+        int lastGoodIndexPosition = nums.length - 1;
+        for(int i = nums.length -1; i>= 0; i--){
+            if(i + nums[i] >= lastGoodIndexPosition){
+                lastGoodIndexPosition = i;
+            }
+        }
+        return lastGoodIndexPosition == 0;
+
+    }
+}
+
+class Solution_MI {
+    public int[][] merge(int[][] intervals) {
+
+        if(intervals.length <= 1){
+            return intervals;
+        }
+
+        Arrays.sort(intervals, (arr1, arr2) -> Integer.compare(arr1[0], arr2[0]));
+        List<int[]>output_arr = new ArrayList<>();
+        int[] current_interval = intervals[0];
+        output_arr.add(current_interval);
+
+        for(int[] interval : intervals){
+            int current_begin = current_interval[0];
+            int current_end = current_interval[1];
+            int next_begin = interval[0];
+            int next_end = interval[1];
+
+            if(current_end >= next_begin) {
+                current_interval[1] = Math.max(current_end, next_end);
+            }else {
+                current_interval = interval;
+                output_arr.add(current_interval);
+            }
+        }
+
+
+
+
+        return output_arr.toArray(new int[output_arr.size()][]);
+
+    }
+}
+
+class Solution_Permu {
+    public String getPermutation(int n, int k) {
+
+         StringBuilder sb = new StringBuilder();
+         for(int i = 0; i <= n; i++){
+             sb.append(i);
+         }
+
+         List<String> result = new ArrayList();
+         permute("", sb.toString(), result);
+         return result.get(k - 1);
+
+    }
+
+    private void permute(String prefix, String s, List<String> result){
+        if(s.isEmpty()){
+            result.add(prefix);
+        }else{
+            for(int i = 0; i < s.length(); i++){
+                permute(prefix+s.charAt(i),s.substring(0, i)+ s.substring(i + 1),result);
+            }
+        }
+    }
+
 }
